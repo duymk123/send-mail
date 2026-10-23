@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Gửi Ngọc Anh ❤️ Bức Thư Từ Trái Tim Anh</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💌</text></svg>">
+  
+  <!-- Romantic Google Fonts with full Vietnamese support -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Dancing+Script:wght@600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient Particle Canvas (Sakura petals & floating hearts) -->
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- Romantic Ambient Audio Toggle -->
+  <aside class="music-toggle" id="musicToggle" aria-label="Bật/Tắt nhạc" title="Bật/Tắt nhạc lãng mạn">
+    <div class="music-disc" id="musicDisc">
+      <span class="music-icon">🎵</span>
+      <div class="sound-wave">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <span class="music-text" id="musicLabel">Bật nhạc nè 🎶</span>
+  </aside>
+
+  <main class="app-container">
+    <!-- SCREEN 1: PASSCODE LOCK SCREEN -->
+    <section class="screen lock-screen active" id="lockScreen">
+      <div class="glass-card lock-card">
+        <div class="lock-header">
+          <div class="heart-badge-wrap">
+            <div class="glowing-halo"></div>
+            <div class="heart-badge">💖</div>
+          </div>
+          <h1 class="lock-title">Nhập Mật Khẩu</h1>
+          <p class="lock-subtitle">Mật khẩu là ngày sinh của Ngọc Anh</p>
+        </div>
+
+        <!-- 8 PIN Indicator Slots -->
+        <div class="pin-wrapper" id="pinDisplay" aria-label="Mã khóa 8 số">
+          <div class="pin-slot" data-index="0"><span class="pin-heart">❤️</span></div>
+          <div class="pin-slot" data-index="1"><span class="pin-heart">❤️</span></div>
+          <div class="pin-slot" data-index="2"><span class="pin-heart">❤️</span></div>
+          <div class="pin-slot" data-index="3"><span class="pin-heart">❤️</span></div>
+          <div class="pin-slot" data-index="4"><span class="pin-heart">❤️</span></div>
+          <div class="pin-slot" data-index="5"><span class="pin-heart">❤️</span></div>
+          <div class="pin-slot" data-index="6"><span class="pin-heart">❤️</span></div>
+          <div class="pin-slot" data-index="7"><span class="pin-heart">❤️</span></div>
+        </div>
+
+        <!-- Error Feedback Message -->
+        <div class="feedback-msg" id="feedbackMsg"></div>
+
+        <!-- Romantic On-Screen Keypad -->
+        <div class="keypad-grid">
+          <button type="button" class="key-btn" data-key="1"><span>1</span></button>
+          <button type="button" class="key-btn" data-key="2"><span>2</span></button>
+          <button type="button" class="key-btn" data-key="3"><span>3</span></button>
+          <button type="button" class="key-btn" data-key="4"><span>4</span></button>
+          <button type="button" class="key-btn" data-key="5"><span>5</span></button>
+          <button type="button" class="key-btn" data-key="6"><span>6</span></button>
+          <button type="button" class="key-btn" data-key="7"><span>7</span></button>
+          <button type="button" class="key-btn" data-key="8"><span>8</span></button>
+          <button type="button" class="key-btn" data-key="9"><span>9</span></button>
+          <div class="key-empty"></div>
+          <button type="button" class="key-btn" data-key="0"><span>0</span></button>
+          <button type="button" class="key-btn func-key" id="backspaceBtn" title="Xóa số">
+            <span class="func-icon">⌫</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 2: MAILBOX SCREEN WITH INTERACTIVE 3D ENVELOPE -->
+    <section class="screen mailbox-screen" id="mailboxScreen">
+      <div class="mailbox-content">
+        <div class="mailbox-header">
+          <h2 class="mailbox-title">Bạn có một bức thư</h2>
+          <p class="mailbox-subtitle">Nhấp vào lá thư để mở</p>
+        </div>
+
+        <!-- 3D Realistic Envelope -->
+        <div class="envelope-stage" id="envelopeStage" title="Nhấp vào lá thư để mở">
+          <div class="envelope-glow"></div>
+          
+          <div class="envelope" id="envelope">
+            <!-- Envelope Back Wall -->
+            <div class="env-back"></div>
+
+            <!-- Letter Sliding Inside -->
+            <div class="env-letter-peek" id="letterPeek">
+              <div class="peek-paper">
+                <div class="peek-line"></div>
+                <div class="peek-line short"></div>
+              </div>
+            </div>
+
+            <!-- Envelope Pocket (Left, Right, Bottom flaps) -->
+            <div class="env-pocket"></div>
+
+            <!-- Envelope Top Flap -->
+            <div class="env-flap" id="envFlap"></div>
+          </div>
+
+          <!-- Pulsing Floating Hint -->
+          <div class="open-instruction" id="openInstruction">
+            <div class="touch-icon">💌</div>
+            <span>Nhấp vào lá thư để mở</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FULLSCREEN LETTER MODAL -->
+  <div class="letter-overlay" id="letterOverlay" role="dialog" aria-modal="true">
+    <div class="letter-backdrop" id="letterBackdrop"></div>
+    
+    <article class="parchment-letter" id="parchmentLetter">
+      <!-- Close button -->
+      <button type="button" class="letter-close-btn" id="closeLetterBtn" title="Đóng thư">✕</button>
+
+      <div class="letter-scroll-area">
+        <!-- Letter Body Content -->
+        <section class="letter-text">
+          <p>
+            Ngọc Anh, xin lỗi em vì anh chưa đủ tốt, chưa giải quyết vấn đề giữa chúng ta. Xin em hãy hiểu cho. Anh vẫn ở đây. Anh vẫn cần em. Vẫn mong hai đứa mình có thể tiếp tục . Anh không muốn đánh mất em, dù có bất cứ chuyện gì xảy ra. Anh chưa từng nghĩ anh sẽ từ bỏ. Chỉ là muốn gỡ bỏ những hiểu lầm giữa chúng ta, Có đôi lúc anh thấy bất lực và bế tắc, nhưng lỗi là ở anh, anh mong em sẽ chấp nhận và bỏ qua lỗi lầm dại dột này của anh. ❤️❤️❤️
+          </p>
+        </section>
+      </div>
+    </article>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="music.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
