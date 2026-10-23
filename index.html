@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Gửi Ngọc Anh ❤️ Bức Thư Từ Trái Tim Anh</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💌</text></svg>">
   
@@ -16,17 +16,6 @@
 <body>
   <!-- Ambient Particle Canvas (Sakura petals & floating hearts) -->
   <canvas id="bgCanvas"></canvas>
-
-  <!-- Romantic Ambient Audio Toggle -->
-  <aside class="music-toggle" id="musicToggle" aria-label="Bật/Tắt nhạc" title="Bật/Tắt nhạc lãng mạn">
-    <div class="music-disc" id="musicDisc">
-      <span class="music-icon">🎵</span>
-      <div class="sound-wave">
-        <span></span><span></span><span></span>
-      </div>
-    </div>
-    <span class="music-text" id="musicLabel">Bật nhạc nè 🎶</span>
-  </aside>
 
   <main class="app-container">
     <!-- SCREEN 1: PASSCODE LOCK SCREEN -->
@@ -125,19 +114,18 @@
       <!-- Close button -->
       <button type="button" class="letter-close-btn" id="closeLetterBtn" title="Đóng thư">✕</button>
 
-      <div class="letter-scroll-area">
+      <div class="letter-scroll-area" id="letterScrollArea">
         <!-- Letter Body Content -->
         <section class="letter-text">
           <p>
-            Ngọc Anh, xin lỗi em vì anh chưa đủ tốt, chưa giải quyết vấn đề giữa chúng ta. Xin em hãy hiểu cho. Anh vẫn ở đây. Anh vẫn cần em. Vẫn mong hai đứa mình có thể tiếp tục . Anh không muốn đánh mất em, dù có bất cứ chuyện gì xảy ra. Anh chưa từng nghĩ anh sẽ từ bỏ. Chỉ là muốn gỡ bỏ những hiểu lầm giữa chúng ta, Có đôi lúc anh thấy bất lực và bế tắc, nhưng lỗi là ở anh, anh mong em sẽ chấp nhận và bỏ qua lỗi lầm dại dột này của anh. ❤️❤️❤️
+            Ngọc Anh, xin lỗi em vì anh chưa đủ tốt, chưa giải quyết vấn đề giữa chúng ta. Xin em hãy hiểu cho. Anh vẫn ở đây. Anh vẫn cần em. Vẫn mong hai đứa mình có thể tiếp tục . Anh không muốn đánh mất em, dù có bất cứ chuyện gì xảy ra. Anh chưa từng nghĩ anh sẽ từ bỏ. Chỉ là muốn gỡ bỏ những hiểu lầm giữa chúng ta, Có đôi lúc anh thấy bất lực và bế tắc, nhưng lỗi là ở anh, anh mong em sẽ chấp nhận và bỏ qua lỗi lầm dại dột này của anh. <span class="letter-hearts">❤️❤️❤️</span>
           </p>
         </section>
       </div>
     </article>
   </div>
 
-  <!-- SCRIPTS -->
-  <script src="music.js"></script>
+  <!-- SCRIPT -->
   <script src="script.js"></script>
 </body>
 </html>

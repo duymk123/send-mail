@@ -11,7 +11,6 @@ const pinSlots = document.querySelectorAll('.pin-slot');
 const feedbackMsg = document.getElementById('feedbackMsg');
 const backspaceBtn = document.getElementById('backspaceBtn');
 const keyButtons = document.querySelectorAll('.key-btn[data-key]');
-const musicToggle = document.getElementById('musicToggle');
 
 // Envelope & Letter Elements
 const envelopeStage = document.getElementById('envelopeStage');
@@ -33,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initCanvas();
   bindKeypadEvents();
   bindEnvelopeEvents();
-  bindMusicEvents();
 });
 
 /* ==========================================================
@@ -41,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
    ========================================================== */
 function initCanvas() {
   const canvas = document.getElementById('bgCanvas');
+  if (!canvas) return;
   const ctx = canvas.getContext('2d');
 
   let width = (canvas.width = window.innerWidth);
@@ -51,7 +50,6 @@ function initCanvas() {
     height = canvas.height = window.innerHeight;
   });
 
-  // Petals & Hearts Arrays
   const particles = [];
   const particleCount = Math.min(Math.floor(width / 24), 36);
 
@@ -90,7 +88,6 @@ function initCanvas() {
       ctx.globalAlpha = this.opacity;
 
       if (this.isHeart) {
-        // Draw Heart
         ctx.fillStyle = '#ff758c';
         ctx.beginPath();
         const topCurveHeight = this.size * 0.3;
@@ -102,7 +99,6 @@ function initCanvas() {
         ctx.closePath();
         ctx.fill();
       } else {
-        // Draw Sakura Petal
         ctx.fillStyle = '#ffccd5';
         ctx.beginPath();
         ctx.ellipse(0, 0, this.size * 0.6, this.size * 0.35, Math.PI / 4, 0, 2 * Math.PI);
@@ -117,7 +113,6 @@ function initCanvas() {
     particles.push(new FloatingParticle());
   }
 
-  // Heart Bursts & Rising Hearts from Envelope
   const bursts = [];
   window.createBurst = function (x, y, count = 28) {
     for (let i = 0; i < count; i++) {
@@ -136,7 +131,6 @@ function initCanvas() {
     }
   };
 
-  // Upward fountain of floating hearts specifically for opening the letter
   window.createHeartsFountain = function (x, y, total = 35) {
     for (let i = 0; i < total; i++) {
       setTimeout(() => {
@@ -149,7 +143,7 @@ function initCanvas() {
           size: Math.random() * 20 + 14,
           alpha: 1,
           color: ['#ff4d80', '#ff758c', '#ff85a1', '#f72585'][Math.floor(Math.random() * 4)],
-          gravity: -0.04 // floats upwards!
+          gravity: -0.04
         });
       }, i * 35);
     }
@@ -158,13 +152,11 @@ function initCanvas() {
   function animate() {
     ctx.clearRect(0, 0, width, height);
 
-    // Drifting background particles
     for (const p of particles) {
       p.update();
       p.draw();
     }
 
-    // Dynamic bursts and rising hearts
     for (let i = bursts.length - 1; i >= 0; i--) {
       const b = bursts[i];
       b.x += b.vx;
@@ -179,7 +171,7 @@ function initCanvas() {
 
       ctx.save();
       ctx.globalAlpha = b.alpha;
-      ctx.font = `${b.size}px sans-serif`;
+      ctx.font = b.size + 'px sans-serif';
       ctx.fillText('❤️', b.x, b.y);
       ctx.restore();
     }
@@ -194,22 +186,23 @@ function initCanvas() {
    PASSCODE SCREEN INTERACTIONS
    ========================================================== */
 function bindKeypadEvents() {
-  // On-screen keypad buttons
   keyButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
       const digit = btn.getAttribute('data-key');
       addPasscodeDigit(digit);
     });
   });
 
-  // Backspace button
-  backspaceBtn.addEventListener('click', () => {
-    removePasscodeDigit();
-  });
+  if (backspaceBtn) {
+    backspaceBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      removePasscodeDigit();
+    });
+  }
 
-  // Physical keyboard support
   window.addEventListener('keydown', (e) => {
-    if (!lockScreen.classList.contains('active')) return;
+    if (!lockScreen || !lockScreen.classList.contains('active')) return;
 
     if (e.key >= '0' && e.key <= '9') {
       addPasscodeDigit(e.key);
@@ -222,11 +215,9 @@ function bindKeypadEvents() {
 function addPasscodeDigit(digit) {
   if (isVerifying || enteredPin.length >= 8) return;
 
-  // Clear any existing error message as soon as user types
-  feedbackMsg.textContent = '';
+  if (feedbackMsg) feedbackMsg.textContent = '';
 
   enteredPin.push(digit);
-  window.romanticAudio.playKeypadSound(parseInt(digit, 10));
   updatePinDisplay();
 
   if (enteredPin.length === 8) {
@@ -238,9 +229,8 @@ function removePasscodeDigit() {
   if (isVerifying || enteredPin.length === 0) return;
 
   enteredPin.pop();
-  window.romanticAudio.playBackspaceSound();
   updatePinDisplay();
-  feedbackMsg.textContent = '';
+  if (feedbackMsg) feedbackMsg.textContent = '';
 }
 
 function updatePinDisplay() {
@@ -258,29 +248,25 @@ function verifyPasscode() {
   const enteredString = enteredPin.join('');
 
   if (enteredString === SECRET_PASSCODE) {
-    // SUCCESS: Don't show text, just play sound & smooth transition
-    feedbackMsg.textContent = '';
-    window.romanticAudio.playSuccessSound();
+    if (feedbackMsg) feedbackMsg.textContent = '';
 
-    // Trigger heart burst
-    const rect = pinDisplay.getBoundingClientRect();
-    window.createBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 35);
-
-    // Start background music automatically
-    window.romanticAudio.startMusic();
+    if (pinDisplay && window.createBurst) {
+      const rect = pinDisplay.getBoundingClientRect();
+      window.createBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 35);
+    }
 
     setTimeout(() => {
       transitionToMailbox();
-    }, 700);
+    }, 550);
   } else {
-    // INCORRECT: show "Hãy nhập lại"
-    window.romanticAudio.playWrongSound();
-    pinDisplay.classList.add('shake');
-    feedbackMsg.textContent = 'Hãy nhập lại';
-    feedbackMsg.style.color = '#e02860';
+    if (pinDisplay) pinDisplay.classList.add('shake');
+    if (feedbackMsg) {
+      feedbackMsg.textContent = 'Hãy nhập lại';
+      feedbackMsg.style.color = '#e02860';
+    }
 
     setTimeout(() => {
-      pinDisplay.classList.remove('shake');
+      if (pinDisplay) pinDisplay.classList.remove('shake');
       enteredPin = [];
       updatePinDisplay();
       isVerifying = false;
@@ -289,9 +275,9 @@ function verifyPasscode() {
 }
 
 function transitionToMailbox() {
-  lockScreen.classList.remove('active');
+  if (lockScreen) lockScreen.classList.remove('active');
   setTimeout(() => {
-    mailboxScreen.classList.add('active');
+    if (mailboxScreen) mailboxScreen.classList.add('active');
   }, 350);
 }
 
@@ -299,35 +285,32 @@ function transitionToMailbox() {
    ENVELOPE & LETTER INTERACTIONS
    ========================================================== */
 function bindEnvelopeEvents() {
-  envelopeStage.addEventListener('click', openEnvelope);
-  closeLetterBtn.addEventListener('click', closeLetter);
-  letterBackdrop.addEventListener('click', closeLetter);
+  if (envelopeStage) envelopeStage.addEventListener('click', openEnvelope);
+  if (closeLetterBtn) closeLetterBtn.addEventListener('click', closeLetter);
+  if (letterBackdrop) letterBackdrop.addEventListener('click', closeLetter);
 }
 
 function openEnvelope() {
+  if (!envelope) return;
+
   if (envelope.classList.contains('opened')) {
     openLetterModal();
     return;
   }
 
-  // Play envelope sound
-  window.romanticAudio.playEnvelopeOpenSound();
+  if (envFlap) envFlap.classList.add('open');
 
-  // Flap smoothly opens up
-  envFlap.classList.add('open');
+  if (window.createHeartsFountain) {
+    const envRect = envelope.getBoundingClientRect();
+    const centerX = envRect.left + envRect.width / 2;
+    const centerY = envRect.top + envRect.height * 0.45;
+    window.createHeartsFountain(centerX, centerY, 35);
+  }
 
-  // Trigger hearts floating out from the envelope!
-  const envRect = envelope.getBoundingClientRect();
-  const centerX = envRect.left + envRect.width / 2;
-  const centerY = envRect.top + envRect.height * 0.45;
-  window.createHeartsFountain(centerX, centerY, 35);
-
-  // Slide letter peek out smoothly
   setTimeout(() => {
-    letterPeek.style.transform = 'translateY(-65px)';
+    if (letterPeek) letterPeek.style.transform = 'translateY(-65px)';
   }, 400);
 
-  // Reveal full letter modal
   setTimeout(() => {
     envelope.classList.add('opened');
     openLetterModal();
@@ -335,20 +318,16 @@ function openEnvelope() {
 }
 
 function openLetterModal() {
-  letterOverlay.classList.add('show');
-  const modalRect = parchmentLetter.getBoundingClientRect();
-  window.createBurst(modalRect.left + modalRect.width / 2, modalRect.top + modalRect.height * 0.35, 25);
+  const scrollArea = document.getElementById('letterScrollArea');
+  if (scrollArea) scrollArea.scrollTop = 0;
+
+  if (letterOverlay) letterOverlay.classList.add('show');
+  if (parchmentLetter && window.createBurst) {
+    const modalRect = parchmentLetter.getBoundingClientRect();
+    window.createBurst(modalRect.left + modalRect.width / 2, modalRect.top + modalRect.height * 0.35, 25);
+  }
 }
 
 function closeLetter() {
-  letterOverlay.classList.remove('show');
-}
-
-/* ==========================================================
-   MUSIC TOGGLE
-   ========================================================== */
-function bindMusicEvents() {
-  musicToggle.addEventListener('click', () => {
-    window.romanticAudio.toggle();
-  });
+  if (letterOverlay) letterOverlay.classList.remove('show');
 }
